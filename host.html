@@ -7,18 +7,25 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const conteudoConteiner = urlParams.get('l');
+            const conteudoBase64 = urlParams.get('l');
 
-            if (conteudoConteiner) {
+            if (conteudoBase64) {
+                try {
 
-                const htmlDecodificado = decodeURIComponent(conteudoConteiner);
-                
+                    const htmlDecodificado = decodeURIComponent(atob(conteudoBase64).split('').map(function(c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
 
-                document.body.innerHTML = htmlDecodificado;
+
+                    document.body.innerHTML = htmlDecodificado;
 
 
-                const novaUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                window.history.replaceState({ path: novaUrl }, '', novaUrl);
+                    const novaUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                    window.history.replaceState({ path: novaUrl }, '', novaUrl);
+                } catch (e) {
+                    console.error("Erro ao decodificar o Base64:", e);
+                    document.body.innerHTML = "<p>Erro ao processar o código da URL.</p>";
+                }
             }
         });
     </script>
