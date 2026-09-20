@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>xttp://servers.redirect.function</title>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const destino = urlParams.get('link');
+
+        if (destino) {
+            document.title = "xttp://" + destino; 
+            
+            window.location.replace(destino);
+        } else {
+            document.write('<h1>500</h1><pre>The xttp you are trying to acess is desactivated.</pre>');
+        }
+    </script>
+</head>
+<body>
+    <p>Redirecting...</p>
+</body>
+</html>
