@@ -6,14 +6,15 @@
     <title>XTTP hosts</title>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-
             const urlParams = new URLSearchParams(window.location.search);
             const conteudoConteiner = urlParams.get('l');
 
             if (conteudoConteiner) {
 
+                const htmlDecodificado = decodeURIComponent(conteudoConteiner);
+                
 
-                document.documentElement.innerHTML = decodeURIComponent(conteudoConteiner);
+                document.body.innerHTML = htmlDecodificado;
 
 
                 const novaUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
