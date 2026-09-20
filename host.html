@@ -3,40 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XTTP hosts</title>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            let conteudoBase64 = urlParams.get('l');
+    <title>XTTP Host</title>
+    <style>
+        /* Remove margens e barras de rolagem da página principal */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
 
-            if (conteudoBase64) {
-                try {
-                    // Remove espaços em branco ou quebras de linha que o navegador possa ter inserido
-                    conteudoBase64 = conteudoBase64.replace(/\s/g, '');
-
-                    // Decodifica o Base64 lidando perfeitamente com acentos e caracteres especiais
-                    const binario = atob(conteudoBase64);
-                    const bytes = new Uint8Array(binario.length);
-                    for (let i = 0; i < binario.length; i++) {
-                        bytes[i] = binario.charCodeAt(i);
-                    }
-                    const htmlDecodificado = new TextDecoder('utf-8').decode(bytes);
-
-                    // Injeta o HTML limpo na tela
-                    document.body.innerHTML = htmlDecodificado;
-
-                    // Limpa a URL do navegador
-                    const novaUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                    window.history.replaceState({ path: novaUrl }, '', novaUrl);
-                } catch (e) {
-                    console.error("Erro ao decodificar o Base64:", e);
-                    document.body.innerHTML = "<p>Erro ao processar o código da URL. Verifique se o Base64 está correto.</p>";
-                }
-            }
-        });
-    </script>
+        /* Faz o iframe ocupar a tela cheia e remove as bordas */
+        .sandbox-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+    </style>
 </head>
 <body>
-    <p>This page has no code! please contact the creator.</p>
+
+    <script>
+        // 1. Captura o parâmetro 'l' da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const parametroBase64 = urlParams.get('l');
+
+        if (parametroBase64) {
+            try {
+                // 2. Decodifica o Base64 com suporte a variantes de URL seguro
+                const htmlDecodificado = atob(parametroBase64.replace(/-/g, '+').replace(/_/g, '/'));
+
+                // 3. Cria o iframe dinamicamente com as restrições do Sandbox
+                const iframe = document.createElement('iframe');
+                iframe.className = 'sandbox-frame';
+                
+                /* 
+                   Configuração do Sandbox:
+                   - Sem valor (sandbox=""): Bloqueia absolutamente tudo (scripts, formulários, cookies).
+                   - Se precisar que scripts rodem APENAS dentro do iframe, adicione 'allow-scripts'.
+                   - NUNCA adicione 'allow-same-origin' se o conteúdo for de terceiros, 
+                     pois isso quebraria a proteção do isolamento de cookies/localStorage.
+                */
+                iframe.setAttribute('sandbox', 'allow-scripts'); 
+                
+                // Injeta o HTML decodificado diretamente no documento do iframe
+                iframe.srcdoc = htmlDecodificado;
+
+                // Adiciona o iframe na página
+                document.body.appendChild(iframe);
+
+            } catch (e) {
+                console.error("Erro na decodificação:", e);
+                document.body.innerHTML = "<div style='padding: 20px; font-family: sans-serif;'>Erro ao decodificar o conteúdo.</div>";
+            }
+        } else {
+            document.body.innerHTML = "<div style='padding: 20px; font-family: sans-serif;'>Nenhum parâmetro fornecido (?l=...).</div>";
+        }
+    </script>
+
 </body>
 </html>
