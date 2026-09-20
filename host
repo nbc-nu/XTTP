@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XTTP hosts</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const conteudoConteiner = urlParams.get('l');
+
+            if (conteudoConteiner) {
+
+
+                document.documentElement.innerHTML = decodeURIComponent(conteudoConteiner);
+
+
+                const novaUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                window.history.replaceState({ path: novaUrl }, '', novaUrl);
+            }
+        });
+    </script>
+</head>
+<body>
+    <p>This page has no code! please contact the creator.</p>
+</body>
+</html>
