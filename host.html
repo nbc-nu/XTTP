@@ -7,24 +7,30 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const conteudoBase64 = urlParams.get('l');
+            let conteudoBase64 = urlParams.get('l');
 
             if (conteudoBase64) {
                 try {
+                    // Remove espaços em branco ou quebras de linha que o navegador possa ter inserido
+                    conteudoBase64 = conteudoBase64.replace(/\s/g, '');
 
-                    const htmlDecodificado = decodeURIComponent(atob(conteudoBase64).split('').map(function(c) {
-                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                    }).join(''));
+                    // Decodifica o Base64 lidando perfeitamente com acentos e caracteres especiais
+                    const binario = atob(conteudoBase64);
+                    const bytes = new Uint8Array(binario.length);
+                    for (let i = 0; i < binario.length; i++) {
+                        bytes[i] = binario.charCodeAt(i);
+                    }
+                    const htmlDecodificado = new TextDecoder('utf-8').decode(bytes);
 
-
+                    // Injeta o HTML limpo na tela
                     document.body.innerHTML = htmlDecodificado;
 
-
+                    // Limpa a URL do navegador
                     const novaUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
                     window.history.replaceState({ path: novaUrl }, '', novaUrl);
                 } catch (e) {
                     console.error("Erro ao decodificar o Base64:", e);
-                    document.body.innerHTML = "<p>Erro ao processar o código da URL.</p>";
+                    document.body.innerHTML = "<p>Erro ao processar o código da URL. Verifique se o Base64 está correto.</p>";
                 }
             }
         });
