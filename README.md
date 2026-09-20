@@ -8,3 +8,5 @@ in HTML files
 <pre>a href="https://nbc-nu.github.io/XTTP/?redirect=https://nbc-nu.github.io/XTTP/host?l=YOUR_HTML_HERE">xttp://YOUR_LINK_YOU_WANT_HERE<\a</pre>
 add the < and > in the tags. is because if I put it will apear the link and not the code.
 or you can put <pre>https://nbc-nu.github.io/XTTP/?redirect=https://www.google.com/</pre> and it will work!
+### IMPORTANT
+please encode the HTML in base64!
